@@ -1,6 +1,7 @@
 package com.opinta.config;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AvailableSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,7 +32,7 @@ public class HibernateConfig {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan(new String[]{"com.opinta.entity"});
+        sessionFactory.setPackagesToScan("com.opinta.entity");
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }
@@ -48,9 +49,9 @@ public class HibernateConfig {
 
     private Properties hibernateProperties() {
         Properties properties = new Properties();
-        properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
-        properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
-        properties.put("hibernate.hbm2ddl.auto", environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
+        properties.put(AvailableSettings.DIALECT, environment.getRequiredProperty(AvailableSettings.DIALECT));
+        properties.put(AvailableSettings.SHOW_SQL, environment.getRequiredProperty(AvailableSettings.SHOW_SQL));
+        properties.put(AvailableSettings.HBM2DDL_AUTO, environment.getRequiredProperty(AvailableSettings.HBM2DDL_AUTO));
         return properties;
     }
 

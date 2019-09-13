@@ -8,11 +8,11 @@ public enum DeliveryType {
 
     private String name;
 
-    DeliveryType(String name){
+    DeliveryType(String name) {
         this.name = name;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 }

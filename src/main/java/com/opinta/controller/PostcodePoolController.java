@@ -28,6 +28,8 @@ import static org.springframework.http.HttpStatus.OK;
 public class PostcodePoolController {
     private PostcodePoolService postcodePoolService;
     private BarcodeInnerNumberService barcodeInnerNumberService;
+    private final String NO_POSTCODE_POOL_FOUND = "No PostcodePool found for ID %d";
+    private final String NO_BARCODE_INNER_NUMBER_FOUND = "No barcodeInnerNumber found for ID %d";
 
     @Autowired
     public PostcodePoolController(PostcodePoolService postcodePoolService,
@@ -46,7 +48,7 @@ public class PostcodePoolController {
     public ResponseEntity<?> getPostcodePool(@PathVariable("id") long id) {
         PostcodePoolDto postcodePoolDto = postcodePoolService.getById(id);
         if (postcodePoolDto == null) {
-            return new ResponseEntity<>(format("No PostcodePool found for ID %d", id), NOT_FOUND);
+            return new ResponseEntity<>(format(NO_POSTCODE_POOL_FOUND, id), NOT_FOUND);
         }
         return new ResponseEntity<>(postcodePoolDto, OK);
     }
@@ -61,7 +63,7 @@ public class PostcodePoolController {
     public ResponseEntity<?> updatePostcodePool(@PathVariable long id, @RequestBody PostcodePoolDto postcodePoolDto) {
         postcodePoolDto = postcodePoolService.update(id, postcodePoolDto);
         if (postcodePoolDto == null) {
-            return new ResponseEntity<>(format("No PostcodePool found for ID %d", id), NOT_FOUND);
+            return new ResponseEntity<>(format(NO_POSTCODE_POOL_FOUND, id), NOT_FOUND);
         }
         return new ResponseEntity<>(postcodePoolDto, OK);
     }
@@ -69,7 +71,7 @@ public class PostcodePoolController {
     @DeleteMapping("{id}")
     public ResponseEntity<?> deletePostcodePool(@PathVariable long id) {
         if (!postcodePoolService.delete(id)) {
-            return new ResponseEntity<>(format("No PostcodePool found for ID %d", id), NOT_FOUND);
+            return new ResponseEntity<>(format(NO_POSTCODE_POOL_FOUND, id), NOT_FOUND);
         }
         return new ResponseEntity<>(OK);
     }
@@ -78,7 +80,7 @@ public class PostcodePoolController {
     public ResponseEntity<?> getBarcodeInnerNumbers(@PathVariable long postcodeId) {
         List<BarcodeInnerNumberDto> barcodeInnerNumberDtos = barcodeInnerNumberService.getAll(postcodeId);
         if (barcodeInnerNumberDtos == null) {
-            return new ResponseEntity<>(format("PostcodePool %d doesn't exist", postcodeId), NOT_FOUND);
+            return new ResponseEntity<>(format(NO_POSTCODE_POOL_FOUND, postcodeId), NOT_FOUND);
         }
         return new ResponseEntity<>(barcodeInnerNumberDtos, OK);
     }
@@ -87,7 +89,7 @@ public class PostcodePoolController {
     public ResponseEntity<?> getBarcodeInnerNumber(@PathVariable("id") long id) {
         BarcodeInnerNumberDto barcodeInnerNumberDto = barcodeInnerNumberService.getById(id);
         if (barcodeInnerNumberDto == null) {
-            return new ResponseEntity<>(format("No barcodeInnerNumber found for ID %d", id), NOT_FOUND);
+            return new ResponseEntity<>(format(NO_BARCODE_INNER_NUMBER_FOUND, id), NOT_FOUND);
         }
         return new ResponseEntity<>(barcodeInnerNumberDto, OK);
     }
@@ -107,7 +109,7 @@ public class PostcodePoolController {
     @DeleteMapping("inner-numbers/{id}")
     public ResponseEntity<?> deleteBarcodeInnerNumber(@PathVariable long id) {
         if (!barcodeInnerNumberService.delete(id)) {
-            return new ResponseEntity<>(format("No barcodeInnerNumber found for ID %d", id), NOT_FOUND);
+            return new ResponseEntity<>(format(NO_BARCODE_INNER_NUMBER_FOUND, id), NOT_FOUND);
         }
         return new ResponseEntity<>(OK);
     }

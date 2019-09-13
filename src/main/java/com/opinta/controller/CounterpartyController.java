@@ -24,19 +24,19 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
-
 @RestController
 @RequestMapping("/counterparties")
 public class CounterpartyController {
     private final CounterpartyService counterpartyService;
     private final ClientService clientService;
-    
+    private static final String NO_COUNTERPARTY_FOUND = "No Counterparty found for ID %d";
+
     @Autowired
     public CounterpartyController(CounterpartyService counterpartyService, ClientService clientService) {
         this.counterpartyService = counterpartyService;
         this.clientService = clientService;
     }
-    
+
     @GetMapping
     @ResponseStatus(OK)
     public List<CounterpartyDto> getAllPostOffices() {
@@ -47,7 +47,7 @@ public class CounterpartyController {
     public ResponseEntity<?> getPostOffice(@PathVariable("id") long id) {
         CounterpartyDto counterpartyDto = counterpartyService.getById(id);
         if (counterpartyDto == null) {
-            return new ResponseEntity<>(format("No Counterparty found for ID %d", id), NOT_FOUND);
+            return new ResponseEntity<>(format(NO_COUNTERPARTY_FOUND, id), NOT_FOUND);
         }
         return new ResponseEntity<>(counterpartyDto, OK);
     }
@@ -56,11 +56,11 @@ public class CounterpartyController {
     public ResponseEntity<?> getClientsByCounterpartyId(@PathVariable long counterpartyId) {
         List<ClientDto> clientDtos = clientService.getAllByCounterpartyId(counterpartyId);
         if (clientDtos == null) {
-            return new ResponseEntity<>(format("No Counterparty found for ID %d", counterpartyId), NOT_FOUND);
+            return new ResponseEntity<>(format(NO_COUNTERPARTY_FOUND, counterpartyId), NOT_FOUND);
         }
         return new ResponseEntity<>(clientDtos, OK);
     }
-    
+
     @PostMapping
     public ResponseEntity<?> createCounterparty(@RequestBody CounterpartyDto counterpartyDto) {
         counterpartyDto = counterpartyService.save(counterpartyDto);
@@ -69,21 +69,21 @@ public class CounterpartyController {
         }
         return new ResponseEntity<>(counterpartyDto, OK);
     }
-    
+
     @PutMapping("{id}")
     public ResponseEntity<?> updatePostOfficeById(@PathVariable("id") long id,
                                                   @RequestBody CounterpartyDto counterpartyDto) {
         counterpartyDto = counterpartyService.update(id, counterpartyDto);
         if (counterpartyDto == null) {
-            return new ResponseEntity<>(format("No Counterparty found for ID %d", id), NOT_FOUND);
+            return new ResponseEntity<>(format(NO_COUNTERPARTY_FOUND, id), NOT_FOUND);
         }
         return new ResponseEntity<>(counterpartyDto, OK);
     }
-    
+
     @DeleteMapping("{id}")
     public ResponseEntity<?> deletePostOfficeById(@PathVariable("id") long id) {
         if (!this.counterpartyService.delete(id)) {
-            return new ResponseEntity<>(format("No Counterparty found for ID %d", id), NOT_FOUND);
+            return new ResponseEntity<>(format(NO_COUNTERPARTY_FOUND, id), NOT_FOUND);
         }
         return new ResponseEntity<>(OK);
     }

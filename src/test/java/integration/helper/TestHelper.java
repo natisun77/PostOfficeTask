@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class TestHelper {
@@ -26,6 +28,10 @@ public class TestHelper {
     @Autowired
     private ShipmentService shipmentService;
     @Autowired
+    private ParcelService parcelService;
+    @Autowired
+    private ParcelItemService parcelItemService;
+    @Autowired
     private PostOfficeService postOfficeService;
 
     public PostOffice createPostOffice() {
@@ -39,8 +45,7 @@ public class TestHelper {
     }
 
     public Shipment createShipment() {
-        Shipment shipment = new Shipment(createClient(), createClient(),
-                DeliveryType.D2D, 1.0F, 1.0F, new BigDecimal(200), new BigDecimal(30), new BigDecimal(35.2));
+        Shipment shipment = new Shipment(createClient(), createClient(), DeliveryType.D2D, new BigDecimal(0));
         return shipmentService.saveEntity(shipment);
     }
 
@@ -48,6 +53,29 @@ public class TestHelper {
         shipmentService.delete(shipment.getId());
         clientService.delete(shipment.getSender().getId());
         clientService.delete(shipment.getRecipient().getId());
+    }
+
+    public Parcel createParcelForShipment(Shipment shipment) {
+        Parcel parcel = new Parcel(125f, 85f, 40.5f, 25f, new BigDecimal("1500"));
+        parcel.setShipment(shipment);
+
+        return parcelService.saveEntity(parcel);
+    }
+
+    public void deleteParcel(Parcel parcel) {
+        parcelService.delete(parcel.getId());
+    }
+
+    public ParcelItem createParcelItem(Parcel parcel) {
+        ParcelItem parcelItem = new ParcelItem("tea", 55, 100, new BigDecimal("200"));
+        ParcelItem parcelItemSaved = parcelItemService.saveEntity(parcelItem);
+        parcel.getParcelItems().add(parcelItemSaved);
+        parcelService.saveEntity(parcel);
+        return parcelItemSaved;
+    }
+
+    public void deleteParcelItem(ParcelItem parcelItem) {
+        parcelItemService.delete(parcelItem.getId());
     }
 
     public Client createClient() {

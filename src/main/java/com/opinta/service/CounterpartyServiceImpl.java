@@ -1,17 +1,17 @@
 package com.opinta.service;
 
-import com.opinta.entity.Counterparty;
-import com.opinta.entity.PostcodePool;
-import java.util.List;
-
-import javax.transaction.Transactional;
-
 import com.opinta.dao.CounterpartyDao;
 import com.opinta.dto.CounterpartyDto;
+import com.opinta.entity.Counterparty;
+import com.opinta.entity.PostcodePool;
 import com.opinta.mapper.CounterpartyMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import static org.apache.commons.beanutils.BeanUtils.copyProperties;
 
@@ -31,7 +31,7 @@ public class CounterpartyServiceImpl implements CounterpartyService {
     @Override
     @Transactional
     public List<Counterparty> getAllEntities() {
-        log.info("Getting all counterparties");
+        log.info("Getting all counterparties existed");
         return counterpartyDao.getAll();
     }
 
@@ -58,7 +58,7 @@ public class CounterpartyServiceImpl implements CounterpartyService {
                     counterparties);
             return null;
         }
-        log.info("Saving counterparty {}", counterparty);
+        log.info("Saving the counterparty {}", counterparty);
         return counterpartyDao.save(counterparty);
     }
 
@@ -66,7 +66,7 @@ public class CounterpartyServiceImpl implements CounterpartyService {
     @Transactional
     public List<CounterpartyDto> getAll() {
         log.info("Getting all counterparties");
-        List<Counterparty> counterparties =  counterpartyDao.getAll();
+        List<Counterparty> counterparties = counterpartyDao.getAll();
         return counterpartyMapper.toDto(counterparties);
     }
 
@@ -97,7 +97,7 @@ public class CounterpartyServiceImpl implements CounterpartyService {
         }
         try {
             copyProperties(target, source);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("Can't get properties from object to updatable object for counterparty", e);
         }
         target.setId(id);

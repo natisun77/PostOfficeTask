@@ -44,8 +44,7 @@ public class PDFGeneratorServiceTest {
                 new PostcodePool("00003", false));
         Client sender = new Client("FOP Ivanov", "001", senderAddress, counterparty);
         Client recipient = new Client("Petrov PP", "002", recipientAddress, counterparty);
-        shipment = new Shipment(sender, recipient, DeliveryType.W2W, 1, 1,
-                new BigDecimal("12.5"), new BigDecimal("2.5"), new BigDecimal("15.25"));
+        shipment = new Shipment(sender, recipient, DeliveryType.W2W, new BigDecimal("0.25"));
     }
 
     @Test
@@ -82,19 +81,19 @@ public class PDFGeneratorServiceTest {
                 field.getValue(), "Khreschatik st., 121, Kiev\n00002");
 
         field = (PDTextField) acroForm.getField("mass");
-        assertEquals("Expected mass to be 1.0", field.getValue(), "1.0");
+        assertEquals("Expected mass to be 0.0", field.getValue(), "0.0");
 
         field = (PDTextField) acroForm.getField("value");
-        assertEquals("Expected value to be 12.5", field.getValue(), "12.5");
+        assertEquals("Expected value to be 0", field.getValue(), "0");
 
         field = (PDTextField) acroForm.getField("sendingCost");
-        assertEquals("Expected sendingCost to be 2.5", field.getValue(), "2.5");
+        assertEquals("Expected sendingCost to be 0", field.getValue(), "0");
 
         field = (PDTextField) acroForm.getField("postPrice");
-        assertEquals("Expected postPrice to be 15.25", field.getValue(), "15.25");
+        assertEquals("Expected postPrice to be 0.25", field.getValue(), "0.25");
 
         field = (PDTextField) acroForm.getField("totalCost");
-        assertEquals("Expected totalCost to be 15", field.getValue(), "15.25");
+        assertEquals("Expected totalCost to be 0.25", field.getValue(), "0.25");
 
         verify(shipmentService).getEntityById(1L);
     }
@@ -123,7 +122,7 @@ public class PDFGeneratorServiceTest {
                 field.getValue(), "Khreschatik st., 121, Kiev\n00002");
 
         field = (PDTextField) acroForm.getField("priceHryvnas");
-        assertEquals("Expected priceHryvnas to be 15", field.getValue(), "15");
+        assertEquals("Expected priceHryvnas to be 0", field.getValue(), "0");
 
         field = (PDTextField) acroForm.getField("priceKopiyky");
         assertEquals("Expected priceKopiyky to be 25", field.getValue(), "25");
