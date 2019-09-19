@@ -17,6 +17,7 @@ public class PostcodePoolDaoImpl implements PostcodePoolDao {
     public PostcodePoolDaoImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
+
     @Override
     @SuppressWarnings("unchecked")
     public List<PostcodePool> getAll() {

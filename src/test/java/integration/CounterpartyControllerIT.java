@@ -5,13 +5,13 @@ import com.opinta.dto.CounterpartyDto;
 import com.opinta.entity.Counterparty;
 import com.opinta.mapper.CounterpartyMapper;
 import com.opinta.service.CounterpartyService;
+import integration.helper.TestHelper;
 import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
-import integration.helper.TestHelper;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.when;

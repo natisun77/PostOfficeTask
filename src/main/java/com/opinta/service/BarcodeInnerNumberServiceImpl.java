@@ -1,20 +1,21 @@
 package com.opinta.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.transaction.Transactional;
-
 import com.opinta.dao.BarcodeInnerNumberDao;
 import com.opinta.dao.PostcodePoolDao;
 import com.opinta.dto.BarcodeInnerNumberDto;
-import com.opinta.mapper.BarcodeInnerNumberMapper;
 import com.opinta.entity.BarcodeInnerNumber;
 import com.opinta.entity.PostcodePool;
+import com.opinta.mapper.BarcodeInnerNumberMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.opinta.entity.BarcodeStatus.USED;
 import static java.lang.String.format;
@@ -25,7 +26,7 @@ import static org.apache.commons.beanutils.BeanUtils.copyProperties;
 public class BarcodeInnerNumberServiceImpl implements BarcodeInnerNumberService {
     // TODO delete after implementation stored procedure that generates innerNumbers
     private static final Map<String, Integer> POSTCODE_COUNTERS = new HashMap<>();
-    
+
     private final BarcodeInnerNumberDao barcodeInnerNumberDao;
     private final PostcodePoolDao postcodePoolDao;
     private final BarcodeInnerNumberMapper barcodeInnerNumberMapper;
@@ -44,8 +45,9 @@ public class BarcodeInnerNumberServiceImpl implements BarcodeInnerNumberService 
     public List<BarcodeInnerNumberDto> getAll(long postcodeId) {
         PostcodePool postcodePool = postcodePoolDao.getById(postcodeId);
         if (postcodePool == null) {
-            log.debug("Can't get barcodeInnerNumberDto list by postcodePool. PostCodePool {} doesn't exist", postcodeId);
-            return null;
+            log.debug("Can't get barcodeInnerNumberDto list by postcodePool. PostCodePool {} " +
+                    "doesn't exist", postcodeId);
+            return Collections.emptyList();
         }
         log.info("Getting all barcodeInnerNumbers by postcodeId {}", postcodeId);
         return barcodeInnerNumberMapper.toDto(barcodeInnerNumberDao.getAll(postcodeId));
@@ -57,7 +59,7 @@ public class BarcodeInnerNumberServiceImpl implements BarcodeInnerNumberService 
         log.info("Getting barcodeInnerNumber by id {}", id);
         return barcodeInnerNumberMapper.toDto(barcodeInnerNumberDao.getById(id));
     }
-    
+
     @Override
     @Transactional
     public BarcodeInnerNumberDto save(long postcodeId, BarcodeInnerNumberDto barcodeInnerNumberDto) {
@@ -84,9 +86,10 @@ public class BarcodeInnerNumberServiceImpl implements BarcodeInnerNumberService 
             log.info("Can't update barcodeInnerNumber. BarcodeInnerNumber doesn't exist {}", id);
             return null;
         }
+
         try {
             copyProperties(target, source);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("Can't get properties from object to updatable object for barcodeInnerNumber", e);
         }
         target.setId(id);
@@ -120,7 +123,7 @@ public class BarcodeInnerNumberServiceImpl implements BarcodeInnerNumberService 
         POSTCODE_COUNTERS.putIfAbsent(postcode, 0);
         int innerNumberCounter = POSTCODE_COUNTERS.get(postcode);
         POSTCODE_COUNTERS.put(postcode, innerNumberCounter + 1);
-        if (innerNumberCounter > 9999999) {
+        if (innerNumberCounter > 9_999_999) {
             throw new RuntimeException(format("Barcode %d is too large", innerNumberCounter));
         }
         return String.format("%07d", innerNumberCounter);

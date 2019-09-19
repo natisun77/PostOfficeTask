@@ -29,6 +29,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class ClientController {
     private final ClientService clientService;
     private final ShipmentService shipmentService;
+    private final String CLIENT_DOES_NOT_EXIST = "No client found for ID %d";
     
     @Autowired
     public ClientController(ClientService clientService, ShipmentService shipmentService) {
@@ -46,7 +47,7 @@ public class ClientController {
     public ResponseEntity<?> getClient(@PathVariable("id") long id) {
         ClientDto clientDto = clientService.getById(id);
         if (clientDto == null) {
-            return new ResponseEntity<>(format("No Client found for ID %d", id), NOT_FOUND);
+            return new ResponseEntity<>(format(CLIENT_DOES_NOT_EXIST, id), NOT_FOUND);
         }
         return new ResponseEntity<>(clientDto, OK);
     }
@@ -55,7 +56,7 @@ public class ClientController {
     public ResponseEntity<?> getShipmentsByClientId(@PathVariable long clientId) {
         List<ShipmentDto> shipmentDtos = shipmentService.getAllByClientId(clientId);
         if (shipmentDtos == null) {
-            return new ResponseEntity<>(format("Client %d doesn't exist", clientId), NOT_FOUND);
+            return new ResponseEntity<>(format(CLIENT_DOES_NOT_EXIST, clientId), NOT_FOUND);
         }
         return new ResponseEntity<>(shipmentDtos, OK);
     }
@@ -75,14 +76,14 @@ public class ClientController {
         if (clientDto != null) {
             return new ResponseEntity<>(clientDto, OK);
         } else {
-            return new ResponseEntity<>(format("No Client found for ID %d", id), NOT_FOUND);
+            return new ResponseEntity<>(format(CLIENT_DOES_NOT_EXIST, id), NOT_FOUND);
         }
     }
     
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteClient(@PathVariable long id) {
         if (!clientService.delete(id)) {
-            return new ResponseEntity<>(format("No Client found for ID %d", id), NOT_FOUND);
+            return new ResponseEntity<>(format(CLIENT_DOES_NOT_EXIST, id), NOT_FOUND);
         }
         return new ResponseEntity<>(OK);
     }

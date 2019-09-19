@@ -3,14 +3,16 @@ package com.opinta.service;
 import com.opinta.dao.PostcodePoolDao;
 import com.opinta.dto.BarcodeInnerNumberDto;
 import com.opinta.dto.PostcodePoolDto;
+import com.opinta.entity.PostcodePool;
 import com.opinta.mapper.BarcodeInnerNumberMapper;
 import com.opinta.mapper.PostcodePoolMapper;
-import com.opinta.entity.PostcodePool;
-import java.util.List;
-import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import static org.apache.commons.beanutils.BeanUtils.copyProperties;
 
@@ -67,7 +69,7 @@ public class PostcodePoolServiceImpl implements PostcodePoolService {
         }
         try {
             copyProperties(target, source);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("Can't get properties from object to updatable object for postcodePool", e);
         }
         target.setId(id);
@@ -95,7 +97,8 @@ public class PostcodePoolServiceImpl implements PostcodePoolService {
     public boolean addBarcodeInnerNumbers(long postcodeId, List<BarcodeInnerNumberDto> barcodeInnerNumberDtos) {
         PostcodePool postcodePool = postcodePoolDao.getById(postcodeId);
         if (postcodePool == null) {
-            log.debug("Can't add barcodeInnerNumberDto list to postcodePool. PostCodePool doesn't exist {}", postcodeId);
+            log.debug("Can't add barcodeInnerNumberDto list to postcodePool. " +
+                    "PostCodePool doesn't exist {}", postcodeId);
             return false;
         }
         postcodePool.setBarcodeInnerNumbers(barcodeInnerNumberMapper.toEntity(barcodeInnerNumberDtos));

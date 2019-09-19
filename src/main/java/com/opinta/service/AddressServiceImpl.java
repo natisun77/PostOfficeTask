@@ -1,5 +1,6 @@
 package com.opinta.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -57,7 +58,7 @@ public class AddressServiceImpl implements AddressService {
         }
         try {
             copyProperties(target, source);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("Can't get properties from object to updatable object for address", e);
         }
         target.setId(id);
@@ -101,6 +102,6 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     public AddressDto update(long id, AddressDto addressDto) {
         Address address = updateEntity(id, addressMapper.toEntity(addressDto));
-        return (address == null ? null : addressMapper.toDto(address));
+        return address == null ? null : addressMapper.toDto(address);
     }
 }
